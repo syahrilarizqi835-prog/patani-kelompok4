@@ -33,7 +33,7 @@ class SawahController extends Controller
             'kondisi_tanah' => 'required|in:subur,sedang,kurang',
             'kondisi_air'   => 'required|in:baik,cukup,kurang',
             'catatan'       => 'nullable|string',
-            'foto_lahan'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto_lahan'    => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:2048',
         ]);
 
         $validated['user_id']    = Auth::id();
@@ -72,7 +72,7 @@ class SawahController extends Controller
             'fase_tanam'    => 'required|in:persiapan,vegetatif,generatif,pematangan,panen',
             'status'        => 'required|in:aktif,panen,istirahat',
             'catatan'       => 'nullable|string',
-            'foto_lahan'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto_lahan'    => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:2048',
         ]);
 
         if (!empty($validated['tanggal_tanam']) && !$sawah->estimasi_panen) {

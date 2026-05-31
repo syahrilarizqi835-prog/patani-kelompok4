@@ -48,7 +48,7 @@ class AdminProfilController extends Controller
     public function updateFoto(Request $request)
     {
         $request->validate([
-            'foto_profil' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'foto_profil' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:2048'],
         ]);
 
         $admin = Auth::user();

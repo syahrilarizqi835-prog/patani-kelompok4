@@ -27,7 +27,7 @@ class RegisterController extends Controller
             'desa'       => ['nullable', 'string', 'max:100'],
             'kecamatan'  => ['nullable', 'string', 'max:100'],
             'alamat'     => ['nullable', 'string', 'max:255'],
-            'foto_profil'=> ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'foto_profil'=> ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:2048'],
             'password'   => ['required', 'confirmed', Password::min(8)],
             'role'       => ['required', 'in:admin,petani'],
         ]);
