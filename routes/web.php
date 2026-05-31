@@ -45,10 +45,22 @@ Route::get('/', function () {
     return view('landing.index');
 })->name('landing');
 
-Route::get('/linkstorage', function () {
-    \Illuminate\Support\Facades\Artisan::call('storage:link');
-    return 'Storage linked successfully! Anda sekarang bisa kembali ke aplikasi dan memuat ulang halaman.';
+Route::get('/setup-storage/{token}', function($token) {
+    if ($token !== 'patani2026') {
+        abort(403);
+    }
+    
+    // Remove old symlink
+    if (is_link(public_path('storage'))) {
+        unlink(public_path('storage'));
+    }
+    
+    // Create new symlink
+    $result = symlink(storage_path('app/public'), public_path('storage'));
+    
+    return $result ? 'Storage linked successfully!' : 'Failed to create symlink';
 });
+
 
 
 // ==========================
