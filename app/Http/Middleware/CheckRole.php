@@ -17,13 +17,7 @@ class CheckRole
         $user = Auth::user();
 
         if ($user->role !== $role) {
-            dd([
-                'user_role'     => $user->role,
-                'required_role' => $role,
-                'user_email'    => $user->email,
-                'url'           => $request->url(),
-                'intended'      => session('url.intended'),
-            ]);
+            abort(403, 'Unauthorized action.');
         }
 
         return $next($request);

@@ -29,7 +29,6 @@ class RegisterController extends Controller
             'alamat'     => ['nullable', 'string', 'max:255'],
             'foto_profil'=> ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:2048'],
             'password'   => ['required', 'confirmed', Password::min(8)],
-            'role'       => ['required', 'in:admin,petani'],
         ]);
 
         // Upload foto jika ada
@@ -48,7 +47,7 @@ class RegisterController extends Controller
             'alamat'      => $validated['alamat'] ?? null,
             'foto_profil' => $fotoPath,
             'password'    => Hash::make($validated['password']),
-            'role'        => $validated['role'],
+            'role'        => 'petani',
             'status'      => 'aktif',
         ]);
 

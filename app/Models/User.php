@@ -17,15 +17,13 @@ class User extends Authenticatable
         'email',
         'password',
         'phone',
-        'role',
         'nik',
         'desa',
         'kecamatan',
         'alamat',
         'status',
-        'is_premium',
         'premium_until',
-        'foto_profil', // kolom baru
+        'foto_profil',
     ];
 
     protected $hidden = [
@@ -118,10 +116,9 @@ class User extends Authenticatable
         }
 
         if ($this->premium_until && $this->premium_until < now()) {
-            $this->update([
-                'is_premium'    => false,
-                'premium_until' => null,
-            ]);
+            $this->is_premium = false;
+            $this->premium_until = null;
+            $this->save();
 
             return false;
         }

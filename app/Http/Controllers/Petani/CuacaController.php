@@ -14,49 +14,64 @@ class CuacaController extends Controller
      */
     private function fetchWeatherData()
     {
-        $city   = config('services.openweathermap.city', 'Indramayu');
-        $apiKey = config('services.openweathermap.api_key');
+        try {
+            $city   = config('services.openweathermap.city', 'Indramayu');
+            $apiKey = config('services.openweathermap.api_key');
 
-        // ===============================
-        // CUACA HARI INI (REAL-TIME)
-        // ===============================
-        $response = Http::timeout(15)->get("https://api.openweathermap.org/data/2.5/weather", [
-            'q'     => $city,
-            'appid' => $apiKey,
-            'units' => 'metric',
-            'lang'  => 'id'
-        ]);
+            if (empty($apiKey)) {
+                throw new \Exception('API Key OpenWeatherMap tidak ditemukan.');
+            }
 
-        $current = $response->json();
+            // ===============================
+            // CUACA HARI INI (REAL-TIME)
+            // ===============================
+            $response = Http::timeout(15)->get("https://api.openweathermap.org/data/2.5/weather", [
+                'q'     => $city,
+                'appid' => $apiKey,
+                'units' => 'metric',
+                'lang'  => 'id'
+            ]);
 
-        // Simpan ke database jika berhasil
-        if ($response->successful()) {
-            Cuaca::updateOrCreate(
-                [
-                    'lokasi'  => $city,
-                    'tanggal' => now()->toDateString()
-                ],
-                [
-                    'suhu'             => $current['main']['temp'] ?? null,
-                    'kelembaban'       => $current['main']['humidity'] ?? null,
-                    'curah_hujan'      => $current['rain']['1h'] ?? 0,
-                    'kecepatan_angin'  => $current['wind']['speed'] ?? null,
-                    'kondisi'          => $current['weather'][0]['description'] ?? null,
-                ]
-            );
+            $current = $response->json();
+
+            // Simpan ke database jika berhasil
+            if ($response->successful()) {
+                Cuaca::updateOrCreate(
+                    [
+                        'lokasi'  => $city,
+                        'tanggal' => now()->toDateString()
+                    ],
+                    [
+                        'suhu'             => $current['main']['temp'] ?? null,
+                        'kelembaban'       => $current['main']['humidity'] ?? null,
+                        'curah_hujan'      => $current['rain']['1h'] ?? 0,
+                        'kecepatan_angin'  => $current['wind']['speed'] ?? null,
+                        'kondisi'          => $current['weather'][0]['description'] ?? null,
+                    ]
+                );
+            }
+
+            // ===============================
+            // FORECAST 5 HARI
+            // ===============================
+            $forecastResponse = Http::timeout(15)->get("https://api.openweathermap.org/data/2.5/forecast", [
+                'q'     => $city,
+                'appid' => $apiKey,
+                'units' => 'metric',
+                'lang'  => 'id'
+            ]);
+            
+            $forecast = $forecastResponse->json();
+
+            return compact('current', 'forecast');
+        } catch (\Exception $e) {
+            \Log::error("Gagal mengambil data cuaca: " . $e->getMessage());
+            return [
+                'current'  => null,
+                'forecast' => null,
+                'error'    => 'Gagal mengambil data cuaca dari server OpenWeatherMap.'
+            ];
         }
-
-        // ===============================
-        // FORECAST 5 HARI
-        // ===============================
-        $forecast = Http::timeout(15)->get("https://api.openweathermap.org/data/2.5/forecast", [
-            'q'     => $city,
-            'appid' => $apiKey,
-            'units' => 'metric',
-            'lang'  => 'id'
-        ])->json();
-
-        return compact('current', 'forecast');
     }
 
     public function index()

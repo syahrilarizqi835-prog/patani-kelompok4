@@ -101,17 +101,6 @@
                                placeholder="08xxxxxxxxxx">
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Pilih Role <span class="text-red-500">*</span>
-                        </label>
-                        <select name="role" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm">
-                            <option value="">Pilih role Anda</option>
-                            <option value="petani" {{ old('role') == 'petani' ? 'selected' : '' }}>🌾 Petani</option>
-                            <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>🛡️ Admin</option>
-                        </select>
-                    </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">NIK</label>
