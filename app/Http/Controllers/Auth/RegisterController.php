@@ -37,6 +37,9 @@ class RegisterController extends Controller
             $fotoPath = $request->file('foto_profil')->store('foto-profil', 'public');
         }
 
+        // Role is always forced to 'petani' on registration.
+        // Admin accounts must be created exclusively via database seeding
+        // (AdminSeeder) or direct database updates — never through this form.
         $user = User::create([
             'name'        => $validated['name'],
             'email'       => $validated['email'],
@@ -52,10 +55,6 @@ class RegisterController extends Controller
         ]);
 
         Auth::login($user);
-
-        if ($user->role === 'admin') {
-            return redirect('/admin');
-        }
 
         return redirect('/dashboard');
     }
