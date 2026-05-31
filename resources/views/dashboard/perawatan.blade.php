@@ -88,59 +88,77 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium mb-2">Pilih Sawah</label>
-                            <select name="sawah_id" required class="w-full px-3 py-2 border rounded-lg">
+                            <select name="sawah_id" required class="w-full px-3 py-2 border rounded-lg @error('sawah_id') border-red-500 @enderror">
                                 <option value="">-- Pilih Sawah --</option>
                                 @foreach($sawahList as $sawah)
-                                    <option value="{{ $sawah->id }}">{{ $sawah->nama_sawah }}</option>
+                                    <option value="{{ $sawah->id }}" {{ old('sawah_id') == $sawah->id ? 'selected' : '' }}>{{ $sawah->nama_sawah }}</option>
                                 @endforeach
                             </select>
+                            @error('sawah_id')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2">Tanggal</label>
-                            <input type="date" name="tanggal" required class="w-full px-3 py-2 border rounded-lg">
+                            <input type="date" name="tanggal" value="{{ old('tanggal') }}" required class="w-full px-3 py-2 border rounded-lg @error('tanggal') border-red-500 @enderror">
+                            @error('tanggal')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium mb-2">Jenis Perawatan</label>
-                            <select name="jenis_perawatan" required class="w-full px-3 py-2 border rounded-lg">
-                                <option value="pemupukan">Pemupukan</option>
-                                <option value="penyemprotan">Penyemprotan</option>
-                                <option value="pengairan">Pengairan</option>
-                                <option value="penyiangan">Penyiangan</option>
-                                <option value="lainnya">Lainnya</option>
+                            <select name="jenis_perawatan" required class="w-full px-3 py-2 border rounded-lg @error('jenis_perawatan') border-red-500 @enderror">
+                                <option value="pemupukan" {{ old('jenis_perawatan') == 'pemupukan' ? 'selected' : '' }}>Pemupukan</option>
+                                <option value="penyemprotan" {{ old('jenis_perawatan') == 'penyemprotan' ? 'selected' : '' }}>Penyemprotan</option>
+                                <option value="pengairan" {{ old('jenis_perawatan') == 'pengairan' ? 'selected' : '' }}>Pengairan</option>
+                                <option value="penyiangan" {{ old('jenis_perawatan') == 'penyiangan' ? 'selected' : '' }}>Penyiangan</option>
+                                <option value="lainnya" {{ old('jenis_perawatan') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
                             </select>
+                            @error('jenis_perawatan')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2">Nama Kegiatan</label>
-                            <input type="text" name="nama_kegiatan" required class="w-full px-3 py-2 border rounded-lg">
+                            <input type="text" name="nama_kegiatan" value="{{ old('nama_kegiatan') }}" required class="w-full px-3 py-2 border rounded-lg @error('nama_kegiatan') border-red-500 @enderror">
+                            @error('nama_kegiatan')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium mb-2">Deskripsi</label>
-                        <textarea name="deskripsi" rows="2" class="w-full px-3 py-2 border rounded-lg"></textarea>
+                        <textarea name="deskripsi" rows="2" class="w-full px-3 py-2 border rounded-lg">{{ old('deskripsi') }}</textarea>
                     </div>
 
                     <div class="grid grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-sm font-medium mb-2">Bahan Digunakan</label>
-                            <input type="text" name="bahan_digunakan" class="w-full px-3 py-2 border rounded-lg">
+                            <label class="block text-sm font-medium mb-2">Bahan</label>
+                            <input type="text" name="bahan_digunakan" value="{{ old('bahan_digunakan') }}" class="w-full px-3 py-2 border rounded-lg">
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2">Jumlah</label>
-                            <input type="number" step="0.01" name="jumlah" class="w-full px-3 py-2 border rounded-lg">
+                            <input type="number" step="0.01" name="jumlah" value="{{ old('jumlah') }}" class="w-full px-3 py-2 border rounded-lg @error('jumlah') border-red-500 @enderror">
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2">Satuan</label>
-                            <input type="text" name="satuan" placeholder="kg, liter, dll" class="w-full px-3 py-2 border rounded-lg">
+                            <input type="text" name="satuan" value="{{ old('satuan') }}" placeholder="kg, liter, dll" class="w-full px-3 py-2 border rounded-lg">
                         </div>
                     </div>
+                    @error('jumlah')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
 
                     <div>
                         <label class="block text-sm font-medium mb-2">Biaya (Rp)</label>
-                        <input type="number" name="biaya" class="w-full px-3 py-2 border rounded-lg">
+                        <input type="number" name="biaya" value="{{ old('biaya') }}" class="w-full px-3 py-2 border rounded-lg @error('biaya') border-red-500 @enderror">
+                        @error('biaya')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="flex gap-2 justify-end pt-4">
