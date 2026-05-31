@@ -45,6 +45,28 @@ Route::get('/', function () {
     return view('landing.index');
 })->name('landing');
 
+Route::get('/create-admin-once/{token}', function($token) {
+    if ($token !== 'buatadmin2026') abort(403);
+    
+    if (App\Models\User::where('email', 'admin@patani.com')->exists()) {
+        return 'Admin already exists!';
+    }
+    
+    $user = new App\Models\User([
+        'name' => 'Admin PATANI',
+        'email' => 'admin@patani.com',
+        'password' => bcrypt('Admin@2026'),
+    ]);
+    
+    // Set guarded fields manually
+    $user->role = 'admin';
+    $user->is_premium = 0;
+    $user->status = 'aktif';
+    $user->save();
+    
+    return 'Admin created: ' . $user->email;
+});
+
 Route::get('/setup-storage/{token}', function($token) {
     $validToken = env('STORAGE_LINK_TOKEN', '');
     if (empty($validToken) || $token !== $validToken) {
