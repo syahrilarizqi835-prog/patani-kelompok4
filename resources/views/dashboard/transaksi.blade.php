@@ -75,32 +75,32 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
-                {{-- 3 Bulan --}}
+                {{-- 1 Bulan --}}
                 <label class="cursor-pointer">
-                    <input type="radio" name="paket" value="3_bulan" x-model="paket" class="hidden">
-                    <div :class="paket === '3_bulan' ? 'border-yellow-400 bg-yellow-50 shadow-md' : 'border-gray-200'"
+                    <input type="radio" name="paket" value="1_bulan" x-model="paket" class="hidden">
+                    <div :class="paket === '1_bulan' ? 'border-yellow-400 bg-yellow-50 shadow-md' : 'border-gray-200'"
                          class="border-2 rounded-xl p-5 transition hover:border-yellow-300 relative">
-                        <p class="font-bold text-gray-800 text-base">3 Bulan</p>
-                        <p class="text-2xl font-bold text-yellow-600 mt-1">Rp 50.000</p>
-                        <p class="text-xs text-gray-500 mt-1">Rp 16.700/bulan</p>
-                        <div x-show="paket === '3_bulan'" class="absolute top-3 right-3 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
+                        <p class="font-bold text-gray-800 text-base">1 Bulan</p>
+                        <p class="text-2xl font-bold text-yellow-600 mt-1">Rp 29.000</p>
+                        <p class="text-xs text-gray-500 mt-1">Akses penuh 30 hari</p>
+                        <div x-show="paket === '1_bulan'" class="absolute top-3 right-3 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
                             <i class="fas fa-check text-white text-xs"></i>
                         </div>
                     </div>
                 </label>
 
-                {{-- 6 Bulan --}}
+                {{-- 3 Bulan --}}
                 <label class="cursor-pointer relative">
-                    <input type="radio" name="paket" value="6_bulan" x-model="paket" class="hidden">
+                    <input type="radio" name="paket" value="3_bulan" x-model="paket" class="hidden">
                     <span class="absolute -top-2 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs px-3 py-0.5 rounded-full z-10">
                         TERPOPULER
                     </span>
-                    <div :class="paket === '6_bulan' ? 'border-green-500 bg-green-50 shadow-md' : 'border-gray-200'"
+                    <div :class="paket === '3_bulan' ? 'border-green-500 bg-green-50 shadow-md' : 'border-gray-200'"
                          class="border-2 rounded-xl p-5 transition hover:border-green-400 relative">
-                        <p class="font-bold text-gray-800 text-base">6 Bulan</p>
-                        <p class="text-2xl font-bold text-green-600 mt-1">Rp 90.000</p>
-                        <p class="text-xs text-gray-500 mt-1">Rp 15.000/bulan · Hemat 10%</p>
-                        <div x-show="paket === '6_bulan'" class="absolute top-3 right-3 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <p class="font-bold text-gray-800 text-base">3 Bulan</p>
+                        <p class="text-2xl font-bold text-green-600 mt-1">Rp 59.000</p>
+                        <p class="text-xs text-gray-500 mt-1">Rp 19.000/bulan · Hemat 33%</p>
+                        <div x-show="paket === '3_bulan'" class="absolute top-3 right-3 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
                             <i class="fas fa-check text-white text-xs"></i>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
                          class="border-2 rounded-xl p-5 transition hover:border-blue-300 relative">
                         <p class="font-bold text-gray-800 text-base">12 Bulan</p>
                         <p class="text-2xl font-bold text-blue-600 mt-1">Rp 159.000</p>
-                        <p class="text-xs text-gray-500 mt-1">Rp 13.250/bulan · Hemat 20%</p>
+                        <p class="text-xs text-gray-500 mt-1">Rp 13.000/bulan · Hemat 54%</p>
                         <div x-show="paket === '12_bulan'" class="absolute top-3 right-3 w-5 h-5 bg-blue-400 rounded-full flex items-center justify-center">
                             <i class="fas fa-check text-white text-xs"></i>
                         </div>

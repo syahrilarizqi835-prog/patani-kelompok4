@@ -34,7 +34,6 @@ class TransaksiPremium extends Model
         return match($this->paket) {
             '1_bulan'  => '1 Bulan',
             '3_bulan'  => '3 Bulan',
-            '6_bulan'  => '6 Bulan',
             '12_bulan' => '12 Bulan',
             default    => $this->paket,
         };

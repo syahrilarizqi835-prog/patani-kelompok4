@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Log;
 class TransaksiController extends Controller
 {
     const HARGA = [
-        '3_bulan'  => ['harga' => 50000,  'durasi' => 3,  'label' => '3 Bulan'],
-        '6_bulan'  => ['harga' => 90000,  'durasi' => 6,  'label' => '6 Bulan'],
+        '1_bulan'  => ['harga' => 29000,  'durasi' => 1,  'label' => '1 Bulan'],
+        '3_bulan'  => ['harga' => 59000,  'durasi' => 3,  'label' => '3 Bulan'],
         '12_bulan' => ['harga' => 159000, 'durasi' => 12, 'label' => '12 Bulan'],
     ];
 
@@ -38,7 +38,7 @@ class TransaksiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'paket' => 'required|in:3_bulan,6_bulan,12_bulan',
+            'paket' => 'required|in:1_bulan,3_bulan,12_bulan',
         ]);
 
         $existing = TransaksiPremium::where('user_id', Auth::id())
