@@ -46,7 +46,8 @@ Route::get('/', function () {
 })->name('landing');
 
 Route::get('/setup-storage/{token}', function($token) {
-    if ($token !== 'patani2026') {
+    $validToken = env('STORAGE_LINK_TOKEN', '');
+    if (empty($validToken) || $token !== $validToken) {
         abort(403);
     }
     
