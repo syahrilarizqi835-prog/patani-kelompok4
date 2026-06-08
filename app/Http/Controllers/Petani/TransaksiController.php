@@ -84,6 +84,11 @@ class TransaksiController extends Controller
                     'name'     => 'Premium PATANI ' . $paket['label'],
                 ],
             ],
+            'callbacks' => [
+                'finish' => env('APP_URL') . '/dashboard/transaksi/finish',
+                'unfinish' => env('APP_URL') . '/dashboard/transaksi',
+                'error' => env('APP_URL') . '/dashboard/transaksi',
+            ]
         ];
 
         try {
