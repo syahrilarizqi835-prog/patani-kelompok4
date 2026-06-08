@@ -117,6 +117,19 @@ class TransaksiController extends Controller
     {
         $this->setupMidtrans();
 
+        // 1. Verifikasi Signature Key untuk Keamanan
+        $serverKey = config('midtrans.server_key');
+        $signature = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+
+        if ($signature !== $request->signature_key) {
+            Log::error('Midtrans Webhook Security: Invalid Signature', [
+                'order_id'   => $request->order_id,
+                'received'   => $request->signature_key,
+                'calculated' => $signature
+            ]);
+            return response()->json(['message' => 'Invalid signature'], 403);
+        }
+
         try {
             $notif = new \Midtrans\Notification();
         } catch (\Exception $e) {
@@ -128,14 +141,16 @@ class TransaksiController extends Controller
         $transactionStatus = $notif->transaction_status;
         $fraudStatus       = $notif->fraud_status;
 
-        Log::info('Midtrans webhook', compact('orderId', 'transactionStatus', 'fraudStatus'));
+        Log::info('Midtrans webhook received', compact('orderId', 'transactionStatus', 'fraudStatus'));
 
         $transaksi = TransaksiPremium::where('order_id', $orderId)->first();
 
         if (!$transaksi) {
+            Log::warning('Midtrans Webhook: Order ID not found', ['order_id' => $orderId]);
             return response()->json(['message' => 'Transaksi tidak ditemukan'], 404);
         }
 
+        // 2. Cek Status Transaksi (settlement/capture = berhasil)
         if (in_array($transactionStatus, ['settlement', 'capture'])) {
             if ($fraudStatus === 'accept' || $fraudStatus === null) {
                 $this->aktifkanPremium($transaksi);
@@ -162,37 +177,52 @@ class TransaksiController extends Controller
 
         // Kalau masih pending dan punya order_id, cek langsung ke Midtrans
         if ($transaksi->status === 'pending' && $transaksi->order_id) {
-            try {
-                $this->setupMidtrans();
-
-                // Cek status transaksi ke Midtrans API
-                $status = \Midtrans\Transaction::status($transaksi->order_id);
-
-                $transactionStatus = $status->transaction_status ?? null;
-                $fraudStatus       = $status->fraud_status ?? null;
-
-                Log::info('Cek status Midtrans', [
-                    'order_id' => $transaksi->order_id,
-                    'status'   => $transactionStatus,
-                    'fraud'    => $fraudStatus,
-                ]);
-
-                if (in_array($transactionStatus, ['settlement', 'capture'])) {
-                    if ($fraudStatus === 'accept' || $fraudStatus === null) {
-                        $this->aktifkanPremium($transaksi);
-                        return response()->json(['status' => 'aktif', 'is_aktif' => true]);
-                    }
-                } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
-                    $transaksi->update(['status' => 'ditolak']);
-                    return response()->json(['status' => 'ditolak', 'is_aktif' => false]);
-                }
-
-            } catch (\Exception $e) {
-                Log::warning('Gagal cek status Midtrans: ' . $e->getMessage());
+            $result = $this->checkStatus($transaksi->order_id);
+            
+            if ($result) {
+                return response()->json(['status' => 'aktif', 'is_aktif' => true]);
             }
         }
 
         return response()->json(['status' => $transaksi->status, 'is_aktif' => false]);
+    }
+
+    /**
+     * Metode fallback manual untuk cek status ke Midtrans API
+     * Bisa dipanggil oleh admin atau sistem sinkronisasi
+     */
+    public function checkStatus($orderId)
+    {
+        try {
+            $this->setupMidtrans();
+            $status = \Midtrans\Transaction::status($orderId);
+
+            $transactionStatus = $status->transaction_status ?? null;
+            $fraudStatus       = $status->fraud_status ?? null;
+
+            Log::info('Manual Status Check', [
+                'order_id' => $orderId,
+                'status'   => $transactionStatus,
+                'fraud'    => $fraudStatus,
+            ]);
+
+            $transaksi = TransaksiPremium::where('order_id', $orderId)->first();
+            if (!$transaksi) return false;
+
+            if (in_array($transactionStatus, ['settlement', 'capture'])) {
+                if ($fraudStatus === 'accept' || $fraudStatus === null) {
+                    $this->aktifkanPremium($transaksi);
+                    return true;
+                }
+            } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+                $transaksi->update(['status' => 'ditolak']);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Gagal manual cek status Midtrans: ' . $e->getMessage());
+        }
+
+        return false;
     }
 
     private function aktifkanPremium(TransaksiPremium $transaksi)
@@ -200,19 +230,22 @@ class TransaksiController extends Controller
         if ($transaksi->status === 'aktif') return;
 
         $user  = $transaksi->user;
+        
+        // Hitung durasi baru
         $until = $user->premium_until && $user->premium_until > now()
-            ? $user->premium_until->addMonths($transaksi->durasi_bulan)
+            ? \Carbon\Carbon::parse($user->premium_until)->addMonths($transaksi->durasi_bulan)
             : now()->addMonths($transaksi->durasi_bulan);
 
+        // 1. Update status transaksi
         $transaksi->update([
             'status'          => 'aktif',
             'dikonfirmasi_at' => now(),
         ]);
 
-        $user->update([
-            'is_premium'    => true,
-            'premium_until' => $until,
-        ]);
+        // 2. Update status user (Manual Property Assignment agar is_premium tetap terproteksi di fillable)
+        $user->is_premium    = true;
+        $user->premium_until = $until;
+        $user->save();
 
         Log::info("Premium aktif: user {$user->id} hingga {$until}");
     }
