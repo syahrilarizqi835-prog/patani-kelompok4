@@ -30,7 +30,7 @@
             <h2 class="text-xl font-bold text-gray-800">{{ $user->name }}</h2>
             <p class="text-green-600 text-sm font-medium flex items-center justify-center sm:justify-start gap-1 mt-0.5">
                 <i class="fas fa-seedling text-xs"></i> Petani
-                @if($user->is_premium)
+                @if($user->isPremium())
                     <span class="ml-2 inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full font-semibold">
                         <i class="fas fa-crown text-xs"></i> Premium
                     </span>
@@ -184,7 +184,7 @@
                 </div>
                 <div>
                     <span class="text-gray-500 text-xs block mb-0.5">Status Premium</span>
-                    @if($user->is_premium)
+                    @if($user->isPremium())
                         <span class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full text-xs font-medium">
                             <i class="fas fa-crown text-xs"></i> Aktif s/d {{ $user->premium_until?->format('d M Y') }}
                         </span>

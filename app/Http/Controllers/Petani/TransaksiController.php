@@ -85,9 +85,9 @@ class TransaksiController extends Controller
                 ],
             ],
             'callbacks' => [
-                'finish' => env('APP_URL') . '/dashboard/transaksi/finish',
-                'unfinish' => env('APP_URL') . '/dashboard/transaksi',
-                'error' => env('APP_URL') . '/dashboard/transaksi',
+                'finish' => config('app.url') . '/dashboard/transaksi/finish',
+                'unfinish' => config('app.url') . '/dashboard/transaksi',
+                'error' => config('app.url') . '/dashboard/transaksi',
             ]
         ];
 

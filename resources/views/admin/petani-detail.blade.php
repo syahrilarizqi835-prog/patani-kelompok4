@@ -55,8 +55,8 @@
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-500">Premium</span>
-                    <span class="font-semibold {{ $petani->is_premium ? 'text-yellow-600' : 'text-gray-500' }}">
-                        {{ $petani->is_premium ? '✓ Aktif' : 'Tidak' }}
+                    <span class="font-semibold {{ $petani->isPremium() ? 'text-yellow-600' : 'text-gray-500' }}">
+                        {{ $petani->isPremium() ? '✓ Aktif' : 'Tidak' }}
                     </span>
                 </div>
             </div>
