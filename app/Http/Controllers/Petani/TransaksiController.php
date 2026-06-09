@@ -192,6 +192,17 @@ class TransaksiController extends Controller
         return response()->json(['status' => $transaksi->status, 'is_aktif' => false]);
     }
 
+    public function finish(Request $request)
+    {
+        $orderId = $request->order_id;
+
+        if ($orderId) {
+            $this->checkStatus($orderId);
+        }
+
+        return redirect()->route('dashboard.transaksi')->with('success', 'Pembayaran berhasil! Status premium Anda sedang diperbarui.');
+    }
+
     /**
      * Metode fallback manual untuk cek status ke Midtrans API
      * Bisa dipanggil oleh admin atau sistem sinkronisasi

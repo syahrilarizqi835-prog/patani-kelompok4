@@ -142,6 +142,7 @@ Route::middleware(['auth', 'role:petani'])
         Route::post('/transaksi',                  [TransaksiController::class, 'store'])->name('transaksi.store');
         Route::get('/transaksi/{id}',              [TransaksiController::class, 'show'])->name('transaksi.show');
         Route::get('/transaksi/{id}/cek-status',   [TransaksiController::class, 'cekStatus'])->name('transaksi.cek');
+        Route::get('/transaksi/finish',            [TransaksiController::class, 'finish'])->name('transaksi.finish');
 
         // Pengaturan Profil Petani
         Route::get('/pengaturan',          [PetaniPengaturanController::class, 'index'])->name('pengaturan');
