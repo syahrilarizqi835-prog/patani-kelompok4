@@ -39,13 +39,12 @@ class TransaksiAdminController extends Controller
         // Aktifkan premium user
         $user  = $transaksi->user;
         $until = $user->premium_until && $user->premium_until > now()
-            ? $user->premium_until->addMonths($transaksi->durasi_bulan)
+            ? \Carbon\Carbon::parse($user->premium_until)->addMonths($transaksi->durasi_bulan)
             : now()->addMonths($transaksi->durasi_bulan);
 
-        $user->update([
-            'is_premium'    => true,
-            'premium_until' => $until,
-        ]);
+        $user->is_premium    = true;
+        $user->premium_until = $until;
+        $user->save();
 
         return redirect()->back()->with('success', "Premium {$transaksi->paket_label} berhasil diaktifkan untuk {$user->name}.");
     }
@@ -73,10 +72,10 @@ class TransaksiAdminController extends Controller
 
         // Jika transaksi aktif, reset status premium user
         if ($transaksi->status === 'aktif') {
-            $transaksi->user->update([
-                'is_premium'    => false,
-                'premium_until' => null,
-            ]);
+            $user = $transaksi->user;
+            $user->is_premium    = false;
+            $user->premium_until = null;
+            $user->save();
         }
 
         $transaksi->delete();

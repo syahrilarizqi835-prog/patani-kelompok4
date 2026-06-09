@@ -52,4 +52,42 @@ class PerawatanController extends Controller
         
         return redirect()->back()->with('success', 'Data perawatan berhasil ditambahkan!');
     }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'sawah_id'        => 'required|exists:sawah,id',
+            'tanggal'         => 'required|date',
+            'jenis_perawatan' => 'required|in:pemupukan,penyemprotan,pengairan,penyiangan,lainnya',
+            'nama_kegiatan'   => 'required|string|max:255',
+            'deskripsi'       => 'nullable|string',
+            'bahan_digunakan' => 'nullable|string|max:255',
+            'jumlah'          => 'required|numeric|min:0',
+            'satuan'          => 'nullable|string|max:50',
+            'biaya'           => 'required|numeric|min:0',
+            'catatan'         => 'nullable|string',
+        ]);
+
+        // Proteksi IDOR: Pastikan sawah milik user yang sedang login
+        $sawah = Sawah::where('user_id', Auth::id())->findOrFail($validated['sawah_id']);
+        
+        $perawatan = Perawatan::whereHas('sawah', function($query) {
+            $query->where('user_id', Auth::id());
+        })->findOrFail($id);
+
+        $perawatan->update($validated);
+
+        return redirect()->back()->with('success', 'Data perawatan berhasil diperbarui!');
+    }
+
+    public function destroy($id)
+    {
+        $perawatan = Perawatan::whereHas('sawah', function($query) {
+            $query->where('user_id', Auth::id());
+        })->findOrFail($id);
+
+        $perawatan->delete();
+
+        return redirect()->back()->with('success', 'Data perawatan berhasil dihapus!');
+    }
 }

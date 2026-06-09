@@ -134,14 +134,5 @@ Jawab dengan singkat, jelas, dan actionable (bisa langsung dipraktikkan). Gunaka
         ]);
     }
 
-    public function upgradePremium(Request $request, $userId)
-    {
-        $target = \App\Models\User::findOrFail($userId);
-        $bulan  = $request->input('bulan', 1);
-        $target->update([
-            'is_premium'    => true,
-            'premium_until' => now()->addMonths($bulan),
-        ]);
-        return response()->json(['message' => "Premium aktif {$bulan} bulan untuk {$target->name}"]);
-    }
+
 }

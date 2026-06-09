@@ -118,6 +118,43 @@ class RiwayatController extends Controller
         return redirect()->back()->with('success', 'Data riwayat panen berhasil disimpan!' . $mlPesanTambahan);
     }
 
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'sawah_id'       => 'required|exists:sawah,id',
+            'tanggal_panen'  => 'required|date',
+            'hasil_panen'    => 'required|numeric|min:1',
+            'kualitas' => 'required|in:gabah_basah,gabah_kering,beras',
+            'harga_jual'     => 'nullable|numeric|min:0',
+            'catatan'        => 'nullable|string|max:500',
+        ]);
+
+        $riwayat = RiwayatPanen::whereHas('sawah', fn($q) => $q->where('user_id', Auth::id()))
+            ->findOrFail($id);
+
+        $sawah = Sawah::where('user_id', Auth::id())->findOrFail($validated['sawah_id']);
+
+        $hasilPerHektar = ($validated['hasil_panen'] / 1000) / $sawah->luas;
+
+        $totalPendapatan = null;
+        if (!empty($validated['harga_jual'])) {
+            $totalPendapatan = $validated['hasil_panen'] * $validated['harga_jual'];
+        }
+
+        $riwayat->update([
+            'sawah_id'        => $sawah->id,
+            'tanggal_panen'   => $validated['tanggal_panen'],
+            'hasil_panen'     => $validated['hasil_panen'],
+            'hasil_per_hektar'=> round($hasilPerHektar, 4),
+            'kualitas'        => $validated['kualitas'],
+            'harga_jual'      => $validated['harga_jual'] ?? null,
+            'total_pendapatan'=> $totalPendapatan,
+            'catatan'         => $validated['catatan'] ?? null,
+        ]);
+
+        return redirect()->back()->with('success', 'Data riwayat panen berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
         $riwayat = RiwayatPanen::whereHas('sawah', fn($q) => $q->where('user_id', Auth::id()))

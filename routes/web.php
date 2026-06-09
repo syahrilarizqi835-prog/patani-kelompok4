@@ -113,6 +113,8 @@ Route::middleware(['auth', 'role:petani'])
         // Perawatan
         Route::get('/perawatan', [PerawatanController::class, 'index'])->name('perawatan');
         Route::post('/perawatan', [PerawatanController::class, 'store'])->name('perawatan.store');
+        Route::put('/perawatan/{id}', [PerawatanController::class, 'update'])->name('perawatan.update');
+        Route::delete('/perawatan/{id}', [PerawatanController::class, 'destroy'])->name('perawatan.destroy');
 
         // Cuaca
         Route::get('/cuaca', [CuacaController::class, 'index'])->name('cuaca');
@@ -125,6 +127,7 @@ Route::middleware(['auth', 'role:petani'])
         // Riwayat
         Route::get('/riwayat', [RiwayatController::class, 'index'])->name('riwayat');
         Route::post('/riwayat', [RiwayatController::class, 'store'])->name('riwayat.store');
+        Route::put('/riwayat/{id}', [RiwayatController::class, 'update'])->name('riwayat.update');
         Route::delete('/riwayat/{id}', [RiwayatController::class, 'destroy'])->name('riwayat.destroy');
 
         // Notifikasi
